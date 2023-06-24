@@ -1,5 +1,6 @@
 package com.example.demoday.ui.screen
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -29,7 +30,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.demoday.R
+import com.example.demoday.remote.model.SignUpDto
 import com.example.demoday.ui.theme.TextFieldColorPlaceHolder
+import com.example.network.result.Resource
+import org.koin.androidx.compose.koinViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -38,8 +42,30 @@ fun SignUpScreen(navigationSignIn: () -> Unit) {
     var nameText by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var againPassword by remember { mutableStateOf("") }
+    val vm: MainViewModel = koinViewModel()
 
-        Box(
+    fun initViewModel() {
+        var signUpDto = SignUpDto(username = nameText, password = password)
+
+        vm.signUp(signUpDto).observeForever {
+            when (it.status) {
+                Resource.Status.SUCCESS -> {
+                    navigationSignIn.invoke()
+                    }
+
+                Resource.Status.LOADING -> {
+                }
+
+                Resource.Status.ERROR -> {
+
+                }
+                else -> {}
+            }
+        }
+    }
+
+
+    Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
@@ -63,7 +89,7 @@ fun SignUpScreen(navigationSignIn: () -> Unit) {
                     .background(color = Color.Transparent),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Регистрация", fontSize = 30.sp, modifier = Modifier.padding(top = 20.dp))
+                Text("Регистрация", fontSize = 30.sp, modifier = Modifier.padding(top = 20.dp), color = Color.White)
                 TextField(
                     value = nameText,
                     onValueChange = { nameText = it },
@@ -108,7 +134,7 @@ fun SignUpScreen(navigationSignIn: () -> Unit) {
                 )
 
                 Button(
-                    onClick = {navigationSignIn.invoke()},
+                    onClick = {initViewModel()},
                     colors = ButtonDefaults.buttonColors(Color.White),
                     modifier = Modifier.padding(top = 25.dp),
                     shape = RoundedCornerShape(1.dp)
