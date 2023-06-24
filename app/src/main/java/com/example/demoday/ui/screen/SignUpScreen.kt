@@ -1,6 +1,5 @@
 package com.example.demoday.ui.screen
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -32,7 +31,6 @@ import androidx.compose.ui.unit.sp
 import com.example.demoday.R
 import com.example.demoday.remote.model.SignUpDto
 import com.example.demoday.ui.theme.TextFieldColorPlaceHolder
-import com.example.network.result.Resource
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -45,43 +43,35 @@ fun SignUpScreen(navigationSignIn: () -> Unit) {
     val vm: MainViewModel = koinViewModel()
 
     fun initViewModel() {
-        var signUpDto = SignUpDto(username = nameText, password = password)
+        val signUpDto = SignUpDto(username = nameText, password = password)
 
-        vm.signUp(signUpDto).observeForever {
-            when (it.status) {
-                Resource.Status.SUCCESS -> {
-                    navigationSignIn.invoke()
-                    }
-
-                Resource.Status.LOADING -> {
-                }
-
-                Resource.Status.ERROR -> {
-
-                }
-                else -> {}
+        if (password.length in 8..20 && password == againPassword) {
+            vm.signUp(signUpDto).observeForever {
+                navigationSignIn.invoke()
             }
+        } else {
+
         }
     }
 
 
     Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            painter = painterResource(R.drawable.back),
+            contentDescription = null,
             modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                painter = painterResource(R.drawable.back),
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
+            contentScale = ContentScale.Crop
+        )
 
-            Box(
-                modifier = Modifier
-                    .width(325.dp)
-                    .height(450.dp)
-                    .background(color = Color.LightGray.copy(alpha = 0.85f))
-            ) {
+        Box(
+            modifier = Modifier
+                .width(325.dp)
+                .height(450.dp)
+                .background(color = Color.LightGray.copy(alpha = 0.85f))
+        ) {
             Column(
                 modifier = Modifier
                     .padding(20.dp)
@@ -89,7 +79,12 @@ fun SignUpScreen(navigationSignIn: () -> Unit) {
                     .background(color = Color.Transparent),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Регистрация", fontSize = 30.sp, modifier = Modifier.padding(top = 20.dp), color = Color.White)
+                Text(
+                    "Регистрация",
+                    fontSize = 30.sp,
+                    modifier = Modifier.padding(top = 20.dp),
+                    color = Color.White
+                )
                 TextField(
                     value = nameText,
                     onValueChange = { nameText = it },
@@ -134,7 +129,7 @@ fun SignUpScreen(navigationSignIn: () -> Unit) {
                 )
 
                 Button(
-                    onClick = {initViewModel()},
+                    onClick = { initViewModel() },
                     colors = ButtonDefaults.buttonColors(Color.White),
                     modifier = Modifier.padding(top = 25.dp),
                     shape = RoundedCornerShape(1.dp)

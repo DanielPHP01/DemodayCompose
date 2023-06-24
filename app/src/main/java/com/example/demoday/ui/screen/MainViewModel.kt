@@ -8,6 +8,7 @@ import com.example.network.ui.BaseViewModel
 
 class MainViewModel(private val repository: Repository) : BaseViewModel() {
 
+
     fun signUp(signUpDto: SignUpDto): LiveData<Resource<SignUpDto>> {
         return repository.signUp(signUpDto)
     }

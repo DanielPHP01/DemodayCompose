@@ -28,7 +28,7 @@ fun provideOkhttpClient(): OkHttpClient {
 
 fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
     return Retrofit.Builder()
-        .baseUrl("https://9be2-92-62-67-97.ngrok-free.app/api/v1/")
+        .baseUrl("https://898b-212-112-103-130.ngrok-free.app/api/v1/")
         .addConverterFactory(GsonConverterFactory.create())
         .client(okHttpClient)
         .build()
